@@ -1,0 +1,7 @@
+# ninja log v5
+0	505	1666581869899412486	CMakeFiles/DepthFirstSearch.dir/main.cpp.o	c06e2b1afac05bf1
+506	560	1666581869957277806	DepthFirstSearch	a2ced8c5f8648663
+2	238	1666582183405208527	CMakeFiles/DepthFirstSearch.dir/main.cpp.o	c06e2b1afac05bf1
+238	268	1666582183438008448	DepthFirstSearch	a2ced8c5f8648663
+2	300	1666582294905056604	CMakeFiles/DepthFirstSearch.dir/main.cpp.o	c06e2b1afac05bf1
+300	353	1666582294960725166	DepthFirstSearch	a2ced8c5f8648663
