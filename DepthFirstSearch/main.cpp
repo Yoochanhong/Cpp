@@ -45,7 +45,7 @@ void DFS_adjList(GraphType *g, int v);
 int main() {
     int a;
     element vert[] = {A, B, C, D, E, F, G};
-    int in1[] = {A, A, B, B, B, C, C, D, D, E, E, E, F, G, G, G};
+    int in1[] = {A, A, A, A, B, B, B, C, C, D, E, E, E, F, G};
     int out1[] = {G, E, C, B, F, E, A, D, A, C, B, A, B, A};
     V1 = sizeof(vert) / sizeof(element);
     SU1 = sizeof(in1) / sizeof(element);
@@ -65,7 +65,7 @@ int main() {
     printGraph(G1);
 
     cout << "\n\n 깊이 우선 탐색 >>";
-    DFS_adjList(G1, 0);
+    DFS_adjList(G1, C);
     return 0;
 }
 
@@ -128,7 +128,7 @@ void printGraph(GraphType *g) {
     Node *p;
 
     for (a = 0; a < g->n; a++) {
-        printf("\n 정점 %c의ㅣ 인접 리스트 : %c", a + 65, a + 65);
+        printf("\n 정점 %c의 인접 리스트 : %c", a + 65, a + 65);
         p = g->adjList_H[a];
         while (p) {
             printf(" -> %c", p->dat + 65);
@@ -145,6 +145,7 @@ void DFS_adjList(GraphType *g, int v) {
     printf(" %c", v + 65);
 
     while (!isEmpty()) {
+        v = StackTop->dat;
         w = g->adjList_H[v];
         while (w) {
             if (!g->visited[w->dat]) {
