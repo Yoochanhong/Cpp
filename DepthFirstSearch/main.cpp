@@ -1,7 +1,5 @@
 #include <iostream>
-
 using namespace std;
-
 
 #define MX 10
 #define FALSE 0
@@ -11,155 +9,171 @@ typedef int element;
 
 typedef struct _node {
     element dat;
-    struct _node *Link;
+    struct _node* Link;
 } Node;
 
-typedef struct GraphType {
+typedef struct {
+    Node* front;
+    Node* rear;
+} LQueType;
+
+typedef struct GraphType{
     int n;
     int visited[MX];
-    Node *adjList_H[MX];
+    Node* adjList_H[MX];
 } GraphType;
 
-enum {
-    A, B, C, D, E, F, G, H, I, J
-};
-Node *StackTop = NULL;
-int V1, SU1;
+LQueType* createLinkedQue();
+int is_empty(LQueType* LQ);
+void EnQue(LQueType* LQ, element item);
+element DeQue(LQueType* LQ);
+void createGraph(GraphType* g);
+void insertVertex(GraphType* g, int v);
+void insertEdge(GraphType* g, int u, int v);
+void printGraph(GraphType* g);
+void DFS_adjList(GraphType* g, int v);
 
-int isEmpty();
+enum { A, B, C, D, E, F, G, H, I, J };
+int V1, SU1; //V1-그래프의 정점수(벌텍스), SU1-그래프의 간선수(엣지수)
 
-void push(element item);
-
-element pop();
-
-void createGraph(GraphType *g);
-
-void insertVertex(GraphType *g, int u);
-
-void insertEdge(GraphType *g, int u, int v);
-
-void printGraph(GraphType *g);
-
-void DFS_adjList(GraphType *g, int v);
-
-int main() {
+int main()
+{
     int a;
-    element vert[] = {A, B, C, D, E, F, G};
-    int in1[] = {A, A, A, A, B, B, B, C, C, D, E, E, E, F, G};
-    int out1[] = {G, E, C, B, F, E, A, D, A, C, B, A, B, A};
+    element vert[] = { A, B, C, D, E, F, G };
+    int in1[]   = { A, A, A, A, B, B, B, C, C, D, E, E, F, G };
+    int out1[]  = { G, E, C, B, F, E, A, D, A, C, B, A, B, A };
     V1 = sizeof(vert) / sizeof(element);
     SU1 = sizeof(in1) / sizeof(element);
 
-    GraphType *G1 = new GraphType;
+    GraphType* G1 = new GraphType;
     createGraph(G1);
 
     for (a = 0; a < V1; a++) {
         insertVertex(G1, a);
     }
 
-    for (a = 0; a < SU1; a++) {
+    for(a = 0; a < SU1; a++) {
         insertEdge(G1, in1[a], out1[a]);
     }
 
-    cout << "\n\n G1의 인접리스트";
-    printGraph(G1);
-
-    cout << "\n\n 깊이 우선 탐색 >>";
-    DFS_adjList(G1, C);
-    return 0;
+    cout << "\n\n G1의 인접리스트"; printGraph(G1);
+    cout << "\n\n 깊이 우선 탐색 >>"; DFS_adjList(G1, B);
+    cout << "\n\n";
 }
 
-void push(element item) {
-    Node *Tmp = new Node;
-    Tmp->dat = item;
-    Tmp->Link = StackTop;
-    StackTop = Tmp;
+LQueType* createLinkedQue() {
+    LQueType* LQ = new LQueType;
+    LQ->front = NULL;
+    LQ->rear = NULL;
+
+    return LQ;
 }
 
-element pop() {
-    element item;
-    Node *Tmp = StackTop;
-
-    if (isEmpty()) {
-        cout << "\n\n Stack is Empty V!!\n";
+int isEmpty(LQueType* LQ) {
+    if (LQ->front == NULL)
+        return 1;
+    else
         return 0;
-    } else {
-        item = Tmp->dat;
-        StackTop = Tmp->Link;
-        free(Tmp);
-        return item;
+}
+
+void EnQue(LQueType* LQ, element item) {
+    Node* NewNode = new Node;
+    NewNode->dat = item;
+    NewNode->Link = NULL;
+
+    if (isEmpty(LQ)) {
+        LQ->front = NewNode;
+        LQ->rear = NewNode;
+    }
+    else {
+        LQ->rear->Link = NewNode;
+        LQ->rear = NewNode;
     }
 }
 
-void createGraph(GraphType *g) {
+element DeQue(LQueType* LQ) {
+    Node* old = LQ->front;
+    element item;
+
+    if (isEmpty(LQ)) {
+        cout << "\n\n The Que is Empty!\n";
+    }
+    else {
+        item = old->dat;
+        LQ->front = LQ->front->Link;
+        if (LQ->front = NULL)
+            LQ->rear = NULL;
+        free(old);
+    }
+    return item;
+}
+
+void createGraph(GraphType* g) {
     g->n = 0;
+
     for (int v = 0; v < V1; v++) {
         g->visited[v] = 0;
         g->adjList_H[v] = NULL;
     }
 }
 
-void insertVertex(GraphType *g, int v) {
+void insertVertex(GraphType* g, int v) {
     if ((g->n) + 1 > V1) {
-        cout << "\n 그래프 정점의 개수를 초과하였습니다";
+        cout << "\n 그래프 정점의 개수를 초과하였습니다.";
         return;
     }
     g->n++;
 }
 
-void insertEdge(GraphType *g, int u, int v) {
-    Node *GNode = new Node;
+void insertEdge(GraphType* g, int u, int v) {
+    Node* GNode = new Node;
     if (u >= g->n || v >= g->n) {
         cout << "\n 그래프에 없는 정점입니다";
         return;
     }
+
     GNode->dat = v;
     GNode->Link = g->adjList_H[u];
     g->adjList_H[u] = GNode;
 }
 
-int isEmpty() {
-    if (StackTop == NULL) return 1;
-    else return 0;
-}
-
-void printGraph(GraphType *g) {
+void printGraph(GraphType* g) {
     int a;
-    Node *p;
+    char t;
+    Node* p;
 
     for (a = 0; a < g->n; a++) {
-        printf("\n 정점 %c의 인접 리스트 : %c", a + 65, a + 65);
+        t = a + 65;
+        cout << "\n 정점 " << t << "의 인접 리스트 : " << t;
         p = g->adjList_H[a];
         while (p) {
-            printf(" -> %c", p->dat + 65);
+            t = p->dat+65;
+            cout << " -> " << t;
             p = p->Link;
         }
     }
 }
 
-void DFS_adjList(GraphType *g, int v) {
-    Node *w;
-    StackTop = NULL;
-    push(v);
-    g->visited[v] = TRUE;
-    printf(" %c", v + 65);
+void DFS_adjList(GraphType* g, int v) {
+    Node* w;
+    char ch;
+    LQueType* Q = createLinkedQue();
 
-    while (!isEmpty()) {
-        v = StackTop->dat;
-        w = g->adjList_H[v];
-        while (w) {
-            if (!g->visited[w->dat]) {
-                push(w->dat);
+    g->visited[v] = TRUE;
+    ch = v + 65;
+    cout << " " << ch;
+    EnQue(Q, v);
+
+    while (!isEmpty(Q)) {
+        v = DeQue(Q);
+        for (w = g->adjList_H[v]; w; w= w->Link)
+        {
+            if(!g->visited[w->dat]) {
                 g->visited[w->dat] = TRUE;
-                printf("%c", w->dat + 65);
-                v = w->dat;
-                w = g->adjList_H[v];
-            } else {
-                w = w->Link;
+                ch = w->dat + 65;
+                cout << " " << ch;
+                EnQue(Q, w->dat);
             }
         }
-        v = pop();
     }
 }
-
-
